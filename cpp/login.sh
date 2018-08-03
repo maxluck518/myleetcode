@@ -1,2 +1,1 @@
-#!/bin/bash
-proxychains4 leetcode user -l
+leetcode user -l
