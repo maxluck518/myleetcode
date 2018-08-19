@@ -1,0 +1,67 @@
+/**
+ * Definition for a point.
+ * struct Point {
+ *     int x;
+ *     int y;
+ *     Point() : x(0), y(0) {}
+ *     Point(int a, int b) : x(a), y(b) {}
+ * };
+ */
+bool cmp(const Point &a,const Point &b){
+    if(a.x == b.x) return a.y < b.y;
+    else return a.x < b.x;
+}
+pair<int,int> gcd(int a,int b){
+    if(a < 0){
+        a = -a;
+        b = -b;
+    }
+    if(a == 0) return make_pair(0x7fffffff,0x7fffffff);
+    else return make_pair(b/a,b%a);
+}
+class Solution {
+public:
+    int maxPoints(vector<Point>& points) {
+        int n = points.size();
+        sort(points.begin(),points.end(),cmp);
+        int res = 0;
+        for(int i = 0;i<n;i++){
+            int same_point = 1;
+            map<pair<int,int>,int> line;
+            line.insert(make_pair(make_pair(0,0),0));
+            line.insert(make_pair(make_pair(0x7fffffff,0x7fffffff),0));
+            for(int k = i+1;k<n;k++){
+                int a = points[i].x - points[k].x;
+                int b = points[i].y - points[k].y;
+                if(a == 0 && b == 0){
+                    same_point ++;
+                    continue;
+                }
+                else if(a == 0){
+                    a = 0x7fffffff;
+                    b = 0x7fffffff;
+                }
+                else if(b == 0){
+                    a = 0;
+                    b = 0;
+                }
+                pair<int,int> tmp = gcd(a,b);
+                auto it = line.find(tmp);
+                if(it == line.end()){
+                    line.insert(make_pair(tmp,1));
+                }
+                else{
+                    it -> second ++;
+                    res = max(res,it->second);
+                }
+            }
+            for(auto it = line.begin();it != line.end();it++){
+                // cout << it->second << endl;
+                res = max(res,it->second+same_point);
+            }
+            // cout << endl;
+        }
+
+        return res;
+    }
+};
